@@ -18,10 +18,13 @@ namespace Azure.Functions.Domain.Implementations
             this.client = client;
             this.log = log;
         }
-        
-        public Task<int> ExecuteAsync(string input)
+
+        public async Task<int> ExecuteAsync(string input)
         {
-            throw new NotImplementedException();
+            var entityId = new EntityId(nameof(AggregatorStrategy), input);
+            await client.SignalEntityAsync<IEntity>(entityId, _ => _.AddAsync(input));
+            return await Task.FromResult<int>(0);
+
         }
     }
 }
