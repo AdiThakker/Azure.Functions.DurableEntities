@@ -23,7 +23,8 @@ namespace Azure.Functions.Domain.Implementations
         {
             var entityId = new EntityId(nameof(AggregatorStrategy), input);
             await client.SignalEntityAsync<IEntity>(entityId, _ => _.AddAsync(input));
-            return await Task.FromResult<int>(0);
+            var result = await client.ReadEntityStateAsync<int>(entityId);
+            return await Task.FromResult<int>(result.EntityState);
 
         }
     }

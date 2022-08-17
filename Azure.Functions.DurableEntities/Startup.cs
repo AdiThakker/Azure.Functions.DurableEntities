@@ -31,7 +31,7 @@ namespace Azure.Functions.DurableEntities
                 op.TaskHub = "TestHubName";
             });
 
-            builder.Services.AddSingleton(typeof(AggregatorStrategy), sp =>
+            builder.Services.AddSingleton<IStrategy<string,int>>(sp =>
             {
                 var configuration = sp.GetRequiredService<IOptions<EntityConfiguration>>();
                 var durableClientFactory = sp.GetRequiredService<IDurableClientFactory>();
