@@ -15,7 +15,8 @@ namespace Azure.Functions.DurableEntities.Entities
     [JsonObject(MemberSerialization.OptIn)]
     public class AggregatorEntity : IEntity
     {
-        private readonly IOptions<EntityConfiguration> configuration;
+        [JsonProperty]
+        private int max;
         private readonly ILogger<AggregatorEntity> logger;
 
         [JsonProperty]
@@ -23,13 +24,17 @@ namespace Azure.Functions.DurableEntities.Entities
 
         public AggregatorEntity(IOptions<EntityConfiguration> configuration, ILogger<AggregatorEntity> loger)
         {
-            this.configuration = configuration;
+            this.max = configuration.Value.Max;
             this.logger = loger;
         }
 
         public Task<int> AddAsync(string input)
         {
             Total.Add(input);
+            if (Total.Count >this.max)
+                this.logger.LogError($"Escalating as current count: {Total.Count} is greater than configured value of: {this.max}");
+
+
             return Task.FromResult(Total.Count);
         }
 
