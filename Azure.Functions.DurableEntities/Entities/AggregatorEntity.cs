@@ -10,23 +10,23 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Azure.Functions.Domain.Entities
+namespace Azure.Functions.DurableEntities.Entities
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class StatefulEntity : IEntity
+    public class AggregatorEntity : IEntity
     {
         private readonly IOptions<EntityConfiguration> configuration;
-        private readonly ILogger<StatefulEntity> logger;
+        private readonly ILogger<AggregatorEntity> logger;
 
         [JsonProperty]
         public List<string> Total = new();
 
-        public StatefulEntity(IOptions<EntityConfiguration> configuration, ILogger<StatefulEntity> loger)
+        public AggregatorEntity(IOptions<EntityConfiguration> configuration, ILogger<AggregatorEntity> loger)
         {
             this.configuration = configuration;
             this.logger = loger;
         }
-        
+
         public Task<int> AddAsync(string input)
         {
             Total.Add(input);
@@ -38,7 +38,7 @@ namespace Azure.Functions.Domain.Entities
             return Task.FromResult(Total.Count);
         }
 
-        [FunctionName(nameof(StatefulEntity))]
-        public static async Task Run([EntityTrigger] IDurableEntityContext ctx) => await ctx?.DispatchAsync<StatefulEntity>();
+        [FunctionName(nameof(AggregatorEntity))]
+        public static async Task Run([EntityTrigger] IDurableEntityContext ctx) => await ctx?.DispatchAsync<AggregatorEntity>();
     }
 }

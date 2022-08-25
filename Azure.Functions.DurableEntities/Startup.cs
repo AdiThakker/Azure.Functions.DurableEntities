@@ -1,6 +1,6 @@
 ﻿using Azure.Functions.Domain.Configuration;
-using Azure.Functions.Domain.Implementations;
 using Azure.Functions.Domain.Interfaces;
+using Azure.Functions.DurableEntities.Implementations;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask.ContextImplementations;
@@ -28,7 +28,8 @@ namespace Azure.Functions.DurableEntities
             builder.Services.AddDurableClientFactory(op =>
             {
                 op.ConnectionName = "AzureWebJobsStorage";
-                op.TaskHub = "TestHubName";
+                op.TaskHub = "DurableEntitiesHub";
+                op.IsExternalClient = true;
             });
 
             builder.Services.AddSingleton<IStrategy<string,int>>(sp =>

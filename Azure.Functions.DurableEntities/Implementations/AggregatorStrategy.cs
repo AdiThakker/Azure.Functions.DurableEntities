@@ -1,12 +1,10 @@
 ﻿using Azure.Functions.Domain.Interfaces;
+using Azure.Functions.DurableEntities.Entities;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Azure.Functions.Domain.Implementations
+namespace Azure.Functions.DurableEntities.Implementations
 {
     public class AggregatorStrategy : IStrategy<string, int>
     {
@@ -21,10 +19,10 @@ namespace Azure.Functions.Domain.Implementations
 
         public async Task<int> ExecuteAsync(string input)
         {
-            var entityId = new EntityId(nameof(AggregatorStrategy), input);
+            var entityId = new EntityId(nameof(AggregatorEntity), input);
             await client.SignalEntityAsync<IEntity>(entityId, _ => _.AddAsync(input));
             var result = await client.ReadEntityStateAsync<int>(entityId);
-            return await Task.FromResult<int>(result.EntityState);
+            return await Task.FromResult(result.EntityState);
 
         }
     }
