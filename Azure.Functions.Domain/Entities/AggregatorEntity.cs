@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Azure.Functions.DurableEntities.Entities
+namespace Azure.Functions.Domain.Entities
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class AggregatorEntity : IEntity
@@ -24,15 +24,15 @@ namespace Azure.Functions.DurableEntities.Entities
 
         public AggregatorEntity(IOptions<EntityConfiguration> configuration, ILogger<AggregatorEntity> loger)
         {
-            this.max = configuration.Value.Max;
-            this.logger = loger;
+            max = configuration.Value.Max;
+            logger = loger;
         }
 
         public Task<int> AddAsync(string input)
         {
             Total.Add(input);
-            if (Total.Count >this.max)
-                this.logger.LogError($"Escalating as current count: {Total.Count} is greater than configured value of: {this.max}");
+            if (Total.Count > max)
+                logger.LogError($"Escalating as current count: {Total.Count} is greater than configured value of: {max}");
 
 
             return Task.FromResult(Total.Count);
